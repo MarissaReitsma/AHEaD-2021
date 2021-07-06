@@ -122,7 +122,7 @@ line for each `county`. I'd suggest using `ggplot`. Make a pull request to push
 your code in this directory and edit this file to add your plot on this page
 (or you can use the Google Doc).
 
-`Delete this and put your figuers here`
+![Yearly Revenue: Alvin](imgs/yearly-revenue-alvin.png)
 
 Sweet, hopefully that was painless. Now we can get started using STARR!
 
