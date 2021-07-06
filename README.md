@@ -7,6 +7,7 @@
 ## Table of contents
 - [Week 1](#week-1)
 - [Week 2](#week-2)
+- [Week 3](#week-3)
 
 ## Project description
 
@@ -116,3 +117,14 @@ Getting started with coding, modeling, and literature reviews
 
 The above are some suggested MeSH terms to get you started. You might also want
 to explore others and experiment to see the full power of MeSH.
+
+## Week 3
+
+**Readings**
+- Morris, T. P., White, I. R., & Crowther, M. J. (2019). Using simulation studies to evaluate statistical methods. Statistics in medicine, 38(11), 2074-2102. https://doi.org/10.1002/sim.8086
+- Zink, A., & Rose, S. (2020). Fair regression for health care spending. Biometrics, 76(3), 973-982. https://doi.org/10.1111/biom.13206
+
+**Tasks**
+- Complete STARR onboarding with Checo
+- Get started on querying with Checo
+- Work through simulation code from [fair regression](https://github.com/zinka88/Fair-Regression) repository, i.e., run_simulation.R and associated files.
