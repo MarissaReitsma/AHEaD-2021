@@ -8,6 +8,7 @@
 - [Week 1](#week-1)
 - [Week 2](#week-2)
 - [Week 3](#week-3)
+- [Week 4](#week-4)
 
 ## Project description
 
@@ -128,3 +129,13 @@ to explore others and experiment to see the full power of MeSH.
 - Complete STARR onboarding with Checo
 - Get started on querying with Checo
 - Work through simulation code from [fair regression](https://github.com/zinka88/Fair-Regression) repository, i.e., run_simulation.R and associated files.
+
+## Week 4
+
+**Readings**
+- Note to Checo: Preferred readings on good & bad practices for exploring data and trends? "Introduction to Modern Statistics"  https://openintro-ims.netlify.app/index.html has some EDA chapters.
+
+**Tasks**
+- Querying in STARR with Checo. Looking for known patterns (from the literature) in the STARR data (Note: Checo to edit this task)
+- Time to develop a simulation! In our previous code, the simulations were already created. Now we want to generate our own data that is inspired by the STARR data. As you read in last weeks article on simulation studies, simulations are an essential component in health research and part of many research papers. They allow us to generate a world where we know the underlying truth. Thus, we can test the performance of methods as well as create data sources that area easily shareable when our real data have restricted access. In the [Machine Learning](Machine-Learning) exercise, there were 2 uniform independent variables (covariates) W1 and W2 and 1 binary outcome that was generated based on W1 and W2. Real-world data is more complex, both in the number of variables and the relationships between them. Your assignment is to create a simplified simulated data set loosley inspired by the STARR data. Select 5 covariates to generate, where 1 is documented sex. When considering how to structure variables, think about information loss. For example, age is often recorded as a bounded continuous or discrete variable (e.g., 18, 19, 20, 21, etc). However, sometimes age is categorized into bins (e.g., 18-25). What are the pros and cons of using categories? Your covariates can also depend on each other. For example, if one of the covariates is a particular health condition that occurs more frequently among older adults, that covariate could be generated dependent on age. A 6th covariate should be a binary indicator for gender minority status. What percent of the population should have gender minority status? For the outcome, create a simulated variable for 1-year mortality. When deciding which covariates to generate, think about what variables you would want in order to generate a mortality variable. It is not expected that the simulated data would replicate the complexity of the STARR data, but rather provide a reference point for certain features like the size of the data and kinds of variables as well as an opportunity to synthesize the information you've learned to date on this project.
+
