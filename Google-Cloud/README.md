@@ -281,8 +281,8 @@ can be unreliable. Medical treatments and surgical procedures are another way.
 Deliverables
 - A list of strategies you used and a brief justification
 - R code for your queries (please push to this repo).
-- Basic counts for the number of number of unique individuals you're able to
-  find with each query
+- Basic counts for the number of unique individuals you're able to
+  find with each query. (Do not share any counts smaller than 11.)
 
 ## Exploratory Data Analysis
 
