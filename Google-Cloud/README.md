@@ -23,6 +23,9 @@ inform health policy.
 
 - [Perquisites](#perquisites)
 - [STARR](#starr)
+  - [Building queries](#building-queries)
+  - [Results](#results)
+- [Exploratory Data Analysis](#exploratory-data-analysis)
 
 ## Perquisites
 If you don't already have a Google Cloud account, go to:
@@ -127,4 +130,160 @@ your code in this directory and edit this file to add your plot on this page
 Sweet, hopefully that was painless. Now we can get started using STARR!
 
 ## STARR
+
+To use STARR you need work though Stanford's VPN to protect your internet 
+connection and data. Instructions for installing can be found 
+[here](https://uit.stanford.edu/service/vpn). Be sure to log in with the "Full
+Traffic non-split-tunnel" and make sure your network adapter is set to use
+IPv4 (instead of IPv6).
+
+MacOS:
+- Go to Apple - > System Preferences -> Network
+- Select the current network connection listed on the left-hand side, then
+  click the Advanced button.
+- Go to the TCP/IP tab at the top
+- Beside "Configure IPv6", set it to "Link-local Only" and "Apply"
+
+Windows Systems:
+- Settings > Network & Internet
+- Change Adapter Options
+- Select your WiFi or Ethernet or other network connection device
+- Properties
+- Uncheck "Internet Protocol Version 6 (TCP/IPv6)"
+
+We should be ready now!
+
+### Building queries
+
+In order to build queries for records of patients that likely identify as a 
+gender minority, will need to know how the STARR database is structured. Here's
+a diagram of the relationships between the tables:
+
+![STARR Graph](data-dict.png)
+
+If there's a relation between tables, there's a line that connects it and the
+name of the variable that forms the connection. For example, this allows you to
+merge rows in the *Demographics* table with the *Encounters* table with the
+variable `pat_id_coded` and then merge that with the *Pharmacy Orders,
+Procedure Orders, Clinical Note Metadata, etc.* tables with the
+`pat_enc_csn_id_coded` variable. 
+
+We will also need the names of the variables and the values that we want to use
+for our queries. This can be found in the [data
+dictionary](https://docs.google.com/spreadsheets/d/1nX5hxg4nHEYn6mFH7FbMLTahpe_nAGsrhVjXjMchVQc/edit?usp=sharing)
+where each sheet in the Google Spreadsheet contains information about the 
+variables that you'll need to form a query. In the sheets you will see the `PK`
+or *Primary Key* for that table and `FK` or *Join Key* (idk what the F means) to
+other tables. 
+
+**General Guidance**
+- *Start small*: Set a `LIMIT` of `100` rows to save on compute as you test
+  and refine your queries
+- *Add complexity*: Make sure you're getting the right intermediate results 
+  before adding SQL summary operations, conditionals, and joining tables
+- *Develop a workflow*: As with all things coding, there's countless ways of 
+  accomplishing the same task. You may find you like to carry out summary 
+  operations and joins with your SQL call or you my find it easier download more
+  course table and then carry out the operations with `tidyverse` tools.
+
+The actual name of the STARR database we'll be using is `starr_datalake2018`. 
+Lets try a test run to see everything works.
+
+```r
+library("tidyverse")
+library("bigrquery")
+projectId = "mining-clinical-decisions"		# This shouldn't change
+authPath  = "path/to/auth-key.json"		# Change this 
+bq_auth(authPath)
+
+demographic_query = "SELECT 
+			*
+		     FROM
+			starr_datalake2018.demographic
+		     LIMIT
+			100
+		    " 
+demographic_table = bq_project_query(projectId, demographic_query) %>%
+	bq_table_download()
+demographic_table
+```
+
+Okay now lets try something a little more complicated and do what's called a 
+subquery. At a high level, you can run a query to make a table, wrap it in 
+parenthesis, and then query off that. In this example, I'm going to look for 
+distinct patients that were seen for a `History` appointment and then I'm going
+to create indicator variable for their assigned sex at birth and race/ethnicity.
+
+
+```r
+hist_query = "SELECT
+                DISTINCT rit_uid,
+                CASE WHEN gender = 'Male' THEN 1 ELSE 0 END AS males,
+		CASE WHEN gender = 'Female' THEN 1 ELSE 0 END AS females,
+        	CASE WHEN canonical_race LIKE '%Asian%' THEN 1 ELSE 0 END AS asians,
+		CASE WHEN canonical_race LIKE '%Black%' THEN 1 ELSE 0 END AS blacks,    
+	        CASE WHEN canonical_race LIKE '%Pacific%' THEN 1 ELSE 0 END AS pacific_islanders,
+        	CASE WHEN canonical_race LIKE '%White%' THEN 1 ELSE 0 END AS whites,
+		CASE WHEN canonical_race LIKE '%Other%' THEN 1 ELSE 0 END AS race_other,
+        	CASE WHEN canonical_race LIKE '%Unknown%' THEN 1 ELSE 0 END AS race_unknown,
+		CASE WHEN canonical_ethnicity LIKE 'Hispanic%' THEN 1 ELSE 0 END AS hispanic
+              FROM
+                starr_datalake2018.demographic
+              WHERE rit_uid IN
+              ( SELECT DISTINCT
+                  jc_uid
+                FROM 
+                  starr_datalake2018.encounter
+                WHERE appt_type = 'History'
+                LIMIT 100
+              )
+             "
+
+hist_table = bq_project_query(projectId, hist_query) %>%
+  bq_table_download()
+hist_table
+```
+
+Okay but let's say I want to keep some variables from both tables instead of 
+just conditioning on a other table. For that we can use a `JOIN` command or 
+a merge operation. With this query I'm going to try to find patients assigned 
+Female at birth who were diagnosed with Gender Dysphoria and I want to summarize
+how they are insured but I want to use `dplyr` instead of SQL.
+
+```r
+gender_dys_query = "SELECT
+                      dem.rit_uid,
+                      dem.gender,
+                      dem.insurance_payor_name,
+                      dx.icd10
+                    FROM
+                      starr_datalake2018.demographic as dem LEFT JOIN
+                      starr_datalake2018.diagnosis_code as dx ON dem.rit_uid = jc_uid
+                    WHERE dem.gender = 'Female'
+                    AND dx.icd10 = 'F64.2'
+                  "
+gender_dys_table = bq_project_query(projectId, gender_dys_query) %>%
+  bq_table_download()
+gender_dys_table %>% mutate(public_insurance = ifelse(is.na(insurance_payor_name), NA, insurance_payor_name %in% c("MEDICAID", "MEDICARE"))) %>% 
+    group_by(public_insurance) %>% 
+    summarise(n = n())
+```
+
+Awesome, hopefully that's all you need to get started!
+
+### Results
+
+Alright, now that you've got what you need to get started it's your turn to 
+start building queries. Think of of the ways we might find people how are 
+likely to identify as a gender minority. Diagnosis codes are one way but they
+can be unreliable. Medical treatments and surgical procedures are another way.
+
+Deliverables
+- A list of strategies you used and a brief justification
+- R code for your queries (please push to this repo).
+- Basic counts for the number of number of unique individuals you're able to
+  find with each query
+
+## Exploratory Data Analysis
+
 *(Coming soon!)*
