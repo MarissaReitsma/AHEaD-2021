@@ -173,7 +173,7 @@ data, but rather provide a reference point for certain features like the size
 of the data and kinds of variables as well as an opportunity to synthesize the
 information you've learned to date on this project.
 
-## Week 5 + 6
+## Week 5
 
 **Tasks**
 - STARR tasks [*Checo to add*]
