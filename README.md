@@ -9,7 +9,7 @@
 - [Week 2](#week-2)
 - [Week 3](#week-3)
 - [Week 4](#week-4)
-- [Week 5 + 6](#week-5-+-6)
+- [Week 5 + 6](#week-5)
 
 ## Project description
 
