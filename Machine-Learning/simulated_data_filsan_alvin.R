@@ -88,11 +88,9 @@ df2
 print.data.frame(df2)
 
 
-# Complete code for computing mortality based on depression, employment, housing statuses
-# among individuals who experience gender dysphoria
-
+# Invert indicator variable values for 
 df2 = df2 %>% mutate(depr_invert = if_else(depression==1, 0, 1))
-df2 = df2 %>% mutate(dysph_invert = if_else(depression==1, 0, 1))
+df2 = df2 %>% mutate(dysph_invert = if_else(dysph=1, 0, 1))
 
 df2 = df2 %>% mutate(survival_1yr = (depression + employment + housing + dysph_invert)/4 )
 viewdf <- View(df2)
