@@ -9,6 +9,7 @@
 - [Week 2](#week-2)
 - [Week 3](#week-3)
 - [Week 4](#week-4)
+- [Week 5 + 6](#week-5)
 
 ## Project description
 
@@ -171,4 +172,11 @@ expected that the simulated data would replicate the complexity of the STARR
 data, but rather provide a reference point for certain features like the size
 of the data and kinds of variables as well as an opportunity to synthesize the
 information you've learned to date on this project.
+
+## Week 5
+
+**Tasks for Weeks 5 + 6**
+- STARR tasks [*Checo to add*]
+- Adapt the [Machine Learning](Machine-Learning) algorithm code from Week 2 to apply logistic regression, a classification tree, and lasso to your new simulation data that you designed. Compare the results based on overall AUC, accuracy, F1 score, sensitivity, and specificity. Use plot() or ggplot() to graph the predicted values from the three approaches. Now compare the results for the three algorithms based on group fit for gender minority individuals and non-gender minority individuals (e.g., calculate accuracy separately for those individuals who are gender minorities and non-gender minorities). How do the three algorithms perform on group fit? Are the results similar or different when examining overall fit?
+- We'll discuss abstracts at our 7/27 meeting, do not need to prepare anything for this discussion!
 
