@@ -47,11 +47,12 @@ gender_dys_query = "SELECT
                     FROM
                       starr_datalake2018.demographic as dem LEFT JOIN
                       starr_datalake2018.diagnosis_code as dx ON dem.rit_uid = jc_uid
-                    WHERE dem.gender = 'Female'
-                    AND dx.icd10 = 'F64.2'
+                    WHERE dx.icd10 = 'F64.2'
                   "
 gender_dys_table = bq_project_query(projectId, gender_dys_query) %>%
   bq_table_download()
-gender_dys_table %>% mutate(public_insurance = ifelse(is.na(insurance_payor_name), NA, insurance_payor_name %in% c("MEDICAID", "MEDICARE"))) %>% 
-    group_by(public_insurance) %>% 
-    summarise(n = n())
+gender_dys_table %>%
+  filter(gender == "Male") %>%
+  mutate(public_insurance = ifelse(is.na(insurance_payor_name), NA, insurance_payor_name %in% c("MEDICAID", "MEDICARE"))) %>% 
+  group_by(public_insurance) %>% 
+  summarise(n = n())

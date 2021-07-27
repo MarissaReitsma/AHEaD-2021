@@ -264,9 +264,10 @@ gender_dys_query = "SELECT
                   "
 gender_dys_table = bq_project_query(projectId, gender_dys_query) %>%
   bq_table_download()
-gender_dys_table %>% mutate(public_insurance = ifelse(is.na(insurance_payor_name), NA, insurance_payor_name %in% c("MEDICAID", "MEDICARE"))) %>% 
-    group_by(public_insurance) %>% 
-    summarise(n = n())
+gender_dys_table %>% 
+  mutate(public_insurance = ifelse(is.na(insurance_payor_name), NA, insurance_payor_name %in% c("MEDICAID", "MEDICARE"))) %>% 
+  group_by(public_insurance) %>% 
+  summarise(n = n())
 ```
 
 Awesome, hopefully that's all you need to get started!
