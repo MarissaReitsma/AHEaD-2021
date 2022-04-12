@@ -1,5 +1,7 @@
 library("tidyverse")
 library("bigrquery")
+library("stringr")
+
 projectId = "mining-clinical-decisions"         # This shouldn't change
 authPath  = "path/to/auth-key.json"             # Change this
 bq_auth(authPath)
